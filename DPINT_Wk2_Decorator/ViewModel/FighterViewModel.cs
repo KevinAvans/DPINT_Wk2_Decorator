@@ -77,6 +77,7 @@ namespace DPINT_Wk2_Decorator.ViewModel
             _fighter = _fighterFactory.CreateFighter(Lives, AttackValue, DefenseValue, options);
             _canCreateFighter = false;
             CreateFighterCommand.RaiseCanExecuteChanged();
+
         }
 
         public void Attack()

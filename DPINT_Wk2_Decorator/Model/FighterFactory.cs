@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DPINT_Wk2_Decorator.Model
 {
@@ -19,40 +15,45 @@ namespace DPINT_Wk2_Decorator.Model
 
         public FighterFactory()
         {
-            FighterOptions = new Dictionary<string, string>();
-            FighterOptions[DOUBLE_HANDED] = "A double handed sword for double attack and double defense.";
-            FighterOptions[MINION] = "A little minion, adding attack and taking damage before the fighter does.";
-            FighterOptions[POISON] = "A poison for 5 time attacks.";
-            FighterOptions[SHIELD] = "Taking all your damase for 3 defenses.";
-            FighterOptions[SHOTGUN] = "Adding attack, needs reloading every 2 times.";
-            
+            FighterOptions = new Dictionary<string, string>
+            {
+                [DOUBLE_HANDED] = "A double handed sword for double attack and double defense.",
+                [MINION] = "A little minion, adding attack and taking damage before the fighter does.",
+                [POISON] = "A poison for 5 time attacks.",
+                [SHIELD] = "Taking all your damase for 3 defenses.",
+                [SHOTGUN] = "Adding attack, needs reloading every 2 times.",
+                [STRENGTHEN] = "Increasing attack by 10%, increasing defense by 10%."
+            };
+
             // TODO: Implement strengthen on fighter
             //FighterOptions[STRENGTHEN] = "Increasing attack by 10%, increasing defense by 10%.";
         }
 
         public IFighter CreateFighter(int lives, int attack, int defense, IEnumerable<string> options)
         {
-            Fighter fighter = new Fighter(lives, attack, defense);
+            IFighter fighter = new Fighter(lives, attack, defense);
 
             foreach (var option in options)
             {
                 switch (option)
                 {
                     case DOUBLE_HANDED:
-                        fighter.DoubleHanded = true;
+                        fighter = new DoubleHandedFighterDecorator(fighter);
                         break;
                     case MINION:
-                        fighter.MinionLives = fighter.Lives / 2;
-                        fighter.MinionAttackValue = fighter.AttackValue / 2;
+                        fighter = new MinionFighterDecorator(fighter, attack/2, defense/2);
                         break;
                     case POISON:
-                        fighter.PoisonStrength = 10;
+                        fighter = new PoisonFighterDecorator(fighter, 3);
                         break;
                     case SHIELD:
-                        fighter.ShieldDefends = 3;
+                        fighter = new ShieldFighterDecorator(fighter, 3);
                         break;
                     case SHOTGUN:
-                        fighter.UseShotgun = true;
+                        fighter = new ShotgunFighterDecorator(fighter);
+                        break;
+                    case STRENGTHEN:
+                        fighter = new StrenghtenFighterDecorator(fighter);
                         break;
                 }
             }
